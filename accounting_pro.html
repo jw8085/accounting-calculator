@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전문 회계 계산기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            padding: 30px 0;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .calculator-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .calculator-card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .calculator-card p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .calc-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            margin: 0 auto 30px;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .btn-option {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn-option:hover {
+            background: #f0f0f0;
+        }
+
+        .btn-option.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .result-box h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .result-box .amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .result-box .detail {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .result-box .detail p {
+            color: white;
+            margin: 5px 0;
+        }
+
+        .result-section {
+            margin: 20px 0;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            text-align: left;
+        }
+
+        .result-section h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px 0;
+            opacity: 0.8;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-box p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .calculator-card {
+                padding: 30px;
+            }
+
+            .calc-container {
+                padding: 25px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 메인 메뉴 -->
+        <div id="mainMenu">
+            <header>
+                <h1>💼 전문 회계 계산기</h1>
+                <p>필요한 계산기를 선택해주세요</p>
+            </header>
+
+            <div class="main-menu">
+                <div class="calculator-card" onclick="showCalculator('venture')">
+                    <div class="icon">🚀</div>
+                    <h2>벤처투자 소득공제</h2>
+                    <p>벤처기업 투자 시 소득공제 금액을 계산합니다</p>
+                    <button class="btn-primary">계산하러 가기</button>
+                </div>
+
+                <div class="calculator-card" onclick="showCalculator('retirement')">
+                    <div class="icon">💰</div>
+                    <h2>퇴직금 계산기</h2>
+                    <p>근속기간과 평균임금으로 퇴직금을 계산합니다</p>
+                    <button class="btn-primary">계산하러 가기</button>
+                </div>
+
+                <div class="calculator-card" onclick="showCalculator('valuation')">
+                    <div class="icon">📊</div>
+                    <h2>비상장주식 가치평가</h2>
+                    <p>상증세법 기준 비상장주식 가치를 평가합니다</p>
+                    <button class="btn-primary">계산하러 가기</button>
+                </div>
+            </div>
+
+            <footer>
+                <p>© 2024 전문 회계 계산기 | 정확한 계산을 위해 전문가 상담을 권장합니다</p>
+            </footer>
+        </div>
+
+        <!-- 벤처투자 소득공제 계산기 -->
+        <div id="ventureCalc" class="hidden">
+            <div class="calc-container">
+                <button class="back-btn" onclick="showMainMenu()">← 메인으로</button>
+                
+                <header>
+                    <h1 style="color: #333;">🚀 벤처투자 소득공제 계산기</h1>
+                    <p style="color: #666;">벤처기업 투자 시 받을 수 있는 소득공제를 계산합니다</p>
+                </header>
+
+                <div class="info-box">
+                    <p><strong>📌 소득공제율 구간:</strong></p>
+                    <p>• 3천만원 이하: 100%</p>
+                    <p>• 3천만원 초과 ~ 5천만원 이하: 70%</p>
+                    <p>• 5천만원 초과: 30%</p>
+                    <p>• 종합소득금액(과세표준)의 50% 한도 적용</p>
+                </div>
+
+                <div class="form-group">
+                    <label>투자금액 (원)</label>
+                    <input type="number" id="investAmount" placeholder="예: 10000000">
+                </div>
+
+                <div class="form-group">
+                    <label>연간 과세표준 (종합소득금액) (원)</label>
+                    <input type="number" id="totalIncome" placeholder="예: 50000000">
+                    <small>※ 과세표준 = 총급여 - 각종 공제</small>
+                </div>
+
+                <button class="btn-primary" style="width: 100%; padding: 18px;" onclick="calculateVenture()">소득공제 계산하기</button>
+
+                <div id="ventureResult" class="result-box hidden">
+                    <h3>💰 계산 결과</h3>
+                    <div class="detail">
+                        <p>투자금액: <span id="resultInvest">0</span>원</p>
+                        <p>소득공제액: <span id="deductionAmount">0</span>원</p>
+                        <p>예상 절세액: <span id="taxSavings">0</span>원</p>
+                        <p>실질수익률: <span id="returnRate">0</span>%</p>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+                        <p style="font-size: 1em;"><strong>구간별 계산 내역:</strong></p>
+                        <p id="breakdown1" style="font-size: 0.9em;"></p>
+                        <p id="breakdown2" style="font-size: 0.9em;"></p>
+                        <p id="breakdown3" style="font-size: 0.9em;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 퇴직금 계산기 -->
+        <div id="retirementCalc" class="hidden">
+            <div class="calc-container">
+                <button class="back-btn" onclick="showMainMenu()">← 메인으로</button>
+                
+                <header>
+                    <h1 style="color: #333;">💰 퇴직금 계산기</h1>
+                    <p style="color: #666;">정확한 퇴직금 및 퇴직소득세를 계산합니다</p>
+                </header>
+
+                <div class="info-box">
+                    <p><strong>📌 계산 방식:</strong></p>
+                    <p>• 퇴직 전 3개월 평균임금 기준</p>
+                    <p>• 상여금 및 연차수당 포함 가능</p>
+                    <p>• 환산급여 방식으로 퇴직소득세 계산</p>
+                </div>
+
+                <div class="form-group">
+                    <label>입사일</label>
+                    <input type="date" id="startDate">
+                </div>
+
+                <div class="form-group">
+                    <label>퇴사일</label>
+                    <input type="date" id="endDate">
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>퇴사 전 1개월 급여 (원)</label>
+                        <input type="number" id="salary1" placeholder="예: 3000000">
+                    </div>
+                    <div class="form-group">
+                        <label>퇴사 전 2개월 급여 (원)</label>
+                        <input type="number" id="salary2" placeholder="예: 3000000">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>퇴사 전 3개월 급여 (원)</label>
+                        <input type="number" id="salary3" placeholder="예: 3000000">
+                    </div>
+                    <div class="form-group">
+                        <label>연간 상여금 총액 (원)</label>
+                        <input type="number" id="annualBonus" placeholder="0">
+                        <small>※ 1년간 받은 상여금 총액</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>미사용 연차일수</label>
+                    <input type="number" id="unusedVacation" placeholder="0">
+                    <small>※ 사용하지 않은 연차 일수</small>
+                </div>
+
+                <button class="btn-primary" style="width: 100%; padding: 18px;" onclick="calculateRetirement()">퇴직금 계산하기</button>
+
+                <div id="retirementResult" class="result-box hidden">
+                    <h3>💰 퇴직금 계산 결과</h3>
+                    <div class="detail">
+                        <p>총 근속일수: <span id="workDays">0</span>일</p>
+                        <p>근속연수: <span id="workYears">0</span>년</p>
+                        <p>1일 평균임금: <span id="avgSalary">0</span>원</p>
+                    </div>
+                    <div class="amount" id="retirementPay">0원</div>
+                    <p style="font-size: 1.2em;">총 퇴직금</p>
+                    
+                    <div class="result-section">
+                        <h4>📊 퇴직소득세 계산</h4>
+                        <p>근속연수공제: <span id="serviceDeduction">0</span>원</p>
+                        <p>환산급여: <span id="convertedSalary">0</span>원</p>
+                        <p>환산급여공제: <span id="convertedDeduction">0</span>원</p>
+                        <p>환산과세표준: <span id="convertedTaxable">0</span>원</p>
+                    </div>
+
+                    <div class="result-section">
+                        <p style="font-size: 1.1em;">소득세: <span id="incomeTax">0</span>원</p>
+                        <p style="font-size: 1.1em;">지방소득세: <span id="localTax">0</span>원</p>
+                        <p style="font-size: 1.1em;">총 세액: <span id="totalTax">0</span>원</p>
+                        <p style="font-size: 1.4em; font-weight: bold; margin-top: 10px;">💵 실수령액: <span id="netAmount">0</span>원</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 비상장주식 가치평가 계산기 -->
+        <div id="valuationCalc" class="hidden">
+            <div class="calc-container">
+                <button class="back-btn" onclick="showMainMenu()">← 메인으로</button>
+                
+                <header>
+                    <h1 style="color: #333;">📊 비상장주식 가치평가</h1>
+                    <p style="color: #666;">상증세법 기준 비상장주식 가치를 평가합니다</p>
+                </header>
+
+                <div class="info-box">
+                    <p><strong>📌 평가 방식 (상증세법 기준):</strong></p>
+                    <p>• 순손익가치 (3년 가중평균): 최근 3개년 순손익의 가중평균</p>
+                    <p>• 순자산가치: 자산·부채의 시가평가액 기준</p>
+                    <p>• 가중평균: 순손익가치 3 : 순자산가치 2</p>
+                    <p>• 부동산과다보유법인: 순자산가치 100%</p>
+                </div>
+
+                <h3 style="color: #667eea; margin: 30px 0 20px;">📈 1. 순손익 정보</h3>
+
+                <div class="form-group">
+                    <label>발행주식 총수 (주)</label>
+                    <input type="number" id="totalShares" placeholder="예: 100000">
+                </div>
+
+                <div class="form-group">
+                    <label>1년차 사업연도 순손익액 (원)</label>
+                    <input type="number" id="year1Income" placeholder="예: 1000000000">
+                    <small>※ 평가기준일 이전 가장 최근 사업연도</small>
+                </div>
+
+                <div class="form-group">
+                    <label>2년차 사업연도 순손익액 (원)</label>
+                    <input type="number" id="year2Income" placeholder="예: 800000000">
+                </div>
+
+                <div class="form-group">
+                    <label>3년차 사업연도 순손익액 (원)</label>
+                    <input type="number" id="year3Income" placeholder="예: 600000000">
+                </div>
+
+                <div class="form-group">
+                    <label>3년 만기 회사채 유통수익률 (%)</label>
+                    <input type="number" id="bondYield" placeholder="3.5" step="0.1" value="3.5">
+                    <small>※ 한국은행 발표 기준, 기본값 3.5%</small>
+                </div>
+
+                <h3 style="color: #667eea; margin: 30px 0 20px;">🏢 2. 순자산 정보</h3>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>장부상 자산총액 (원)</label>
+                        <input type="number" id="bookAssets" placeholder="예: 10000000000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>장부상 부채총액 (원)</label>
+                        <input type="number" id="bookLiabilities" placeholder="예: 3000000000">
+                    </div>
+                </div>
+
+                <h3 style="color: #667eea; margin: 30px 0 20px;">💎 3. 시가조정 (선택사항)</h3>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>부동산 시가조정액 (원)</label>
+                        <input type="number" id="realEstateAdj" placeholder="0">
+                        <small>※ 증가시 +, 감소시 -</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>유가증권 시가조정액 (원)</label>
+                        <input type="number" id="securitiesAdj" placeholder="0">
+                        <small>※ 증가시 +, 감소시 -</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>부동산과다보유법인 여부</label>
+                    <div class="button-group">
+                        <button class="btn-option active" id="realEstateNo" onclick="selectRealEstate(false)">일반법인</button>
+                        <button class="btn-option" id="realEstateYes" onclick="selectRealEstate(true)">부동산과다보유법인</button>
+                    </div>
+                    <small>※ 부동산과다보유법인: 순자산가치만 적용</small>
+                </div>
+
+                <button class="btn-primary" style="width: 100%; padding: 18px; margin-top: 20px;" onclick="calculateUnlistedStock()">주식가치 평가하기</button>
+
+                <div id="valuationResult" class="result-box hidden">
+                    <h3>📊 비상장주식 가치평가 결과</h3>
+                    
+                    <div class="result-section">
+                        <h4>💰 순손익가치 계산</h4>
+                        <p>가중평균 순손익액: <span id="weightedIncome">0</span>원</p>
+                        <p>1주당 가중평균 순손익액: <span id="perShareIncome">0</span>원</p>
+                        <p>할인율: <span id="discountRate">0</span>%</p>
+                        <p style="font-weight: bold; font-size: 1.1em;">1주당 순손익가치: <span id="incomeValue">0</span>원</p>
+                    </div>
+
+                    <div class="result-section">
+                        <h4>🏢 순자산가치 계산</h4>
+                        <p>시가 자산총액: <span id="adjAssets">0</span>원</p>
+                        <p>시가 부채총액: <span id="adjLiabilities">0</span>원</p>
+                        <p>순자산가치: <span id="netAssetTotal">0</span>원</p>
+                        <p style="font-weight: bold; font-size: 1.1em;">1주당 순자산가치: <span id="assetValue">0</span>원</p>
+                    </div>
+
+                    <div class="result-section">
+                        <h4>⚖️ 최종 가중평균 가치</h4>
+                        <p>순손익가치 가중치: <span id="incomeWeight">60</span>%</p>
+                        <p>순자산가치 가중치: <span id="assetWeight">40</span>%</p>
+                        <div class="amount" id="finalValue">0원</div>
+                        <p style="font-size: 1.2em;">1주당 최종 가치</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isRealEstateHeavy = false;
+
+        // 화면 전환
+        function showCalculator(calcType) {
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('ventureCalc').classList.add('hidden');
+            document.getElementById('retirementCalc').classList.add('hidden');
+            document.getElementById('valuationCalc').classList.add('hidden');
+            
+            if (calcType === 'venture') {
+                document.getElementById('ventureCalc').classList.remove('hidden');
+            } else if (calcType === 'retirement') {
+                document.getElementById('retirementCalc').classList.remove('hidden');
+            } else if (calcType === 'valuation') {
+                document.getElementById('valuationCalc').classList.remove('hidden');
+            }
+            
+            window.scrollTo(0, 0);
+        }
+
+        function showMainMenu() {
+            document.getElementById('mainMenu').classList.remove('hidden');
+            document.getElementById('ventureCalc').classList.add('hidden');
+            document.getElementById('retirementCalc').classList.add('hidden');
+            document.getElementById('valuationCalc').classList.add('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        // 벤처투자 계산기
+        function calculateVenture() {
+            const investAmount = parseFloat(document.getElementById('investAmount').value) || 0;
+            const annualIncome = parseFloat(document.getElementById('totalIncome').value) || 0;
+            
+            if (investAmount <= 0 || annualIncome <= 0) {
+                alert('투자금액과 연간 과세표준을 입력해주세요!');
+                return;
+            }
+            
+            const maxDeductionLimit = annualIncome * 0.5;
+            let totalDeduction = 0;
+            let remainingInvestment = investAmount;
+            let breakdown = [];
+            
+            if (remainingInvestment > 0) {
+                const amount = Math.min(remainingInvestment, 30000000);
+                const deduction = amount * 1.0;
+                totalDeduction += deduction;
+                breakdown.push(`3천만원 이하: ${amount.toLocaleString()}원 × 100% = ${deduction.toLocaleString()}원`);
+                remainingInvestment -= amount;
+            }
+            
+            if (remainingInvestment > 0) {
+                const amount = Math.min(remainingInvestment, 20000000);
+                const deduction = amount * 0.7;
+                totalDeduction += deduction;
+                breakdown.push(`3~5천만원: ${amount.toLocaleString()}원 × 70% = ${deduction.toLocaleString()}원`);
+                remainingInvestment -= amount;
+            }
+            
+            if (remainingInvestment > 0) {
+                const amount = remainingInvestment;
+                const deduction = amount * 0.3;
+                totalDeduction += deduction;
+                breakdown.push(`5천만원 초과: ${amount.toLocaleString()}원 × 30% = ${deduction.toLocaleString()}원`);
+            }
+            
+            const finalDeduction = Math.min(totalDeduction, maxDeductionLimit);
+            const taxSavings = calculateTaxSavings(annualIncome, finalDeduction);
+            const returnRate = (taxSavings / investAmount) * 100;
+            
+            document.getElementById('ventureResult').classList.remove('hidden');
+            document.getElementById('resultInvest').textContent = investAmount.toLocaleString();
+            document.getElementById('deductionAmount').textContent = Math.floor(finalDeduction).toLocaleString();
+            document.getElementById('taxSavings').textContent = Math.floor(taxSavings).toLocaleString();
+            document.getElementById('returnRate').textContent = returnRate.toFixed(2);
+            document.getElementById('breakdown1').textContent = breakdown[0] || '';
+            document.getElementById('breakdown2').textContent = breakdown[1] || '';
+            document.getElementById('breakdown3').textContent = breakdown[2] || '';
+            
+            document.getElementById('ventureResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function calculateTaxSavings(annualIncome, deductionAmount) {
+            const taxBrackets = [
+                { limit: 14000000, rate: 0.06, deduction: 0 },
+                { limit: 50000000, rate: 0.15, deduction: 1260000 },
+                { limit: 88000000, rate: 0.24, deduction: 5760000 },
+                { limit: 150000000, rate: 0.35, deduction: 14440000 },
+                { limit: 300000000, rate: 0.38, deduction: 18940000 },
+                { limit: 500000000, rate: 0.40, deduction: 24940000 },
+                { limit: 1000000000, rate: 0.42, deduction: 34940000 },
+                { limit: Infinity, rate: 0.45, deduction: 64940000 }
+            ];
+            
+            function getTaxAmount(income) {
+                if (income <= 0) return 0;
+                for (let bracket of taxBrackets) {
+                    if (income <= bracket.limit) {
+                        return income * bracket.rate - bracket.deduction;
+                    }
+                }
+                return income * 0.45 - 64940000;
+            }
+            
+            return Math.max(0, getTaxAmount(annualIncome) - getTaxAmount(annualIncome - deductionAmount));
+        }
+
+        // 퇴직금 계산기
+        function calculateRetirement() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            
+            if (!document.getElementById('startDate').value || !document.getElementById('endDate').value) {
+                alert('입사일과 퇴사일을 입력해주세요!');
+                return;
+            }
+            
+            if (startDate >= endDate) {
+                alert('퇴사일은 입사일보다 나중이어야 합니다!');
+                return;
+            }
+            
+            const salary1 = parseFloat(document.getElementById('salary1').value) || 0;
+            const salary2 = parseFloat(document.getElementById('salary2').value) || 0;
+            const salary3 = parseFloat(document.getElementById('salary3').value) || 0;
+            const annualBonus = parseFloat(document.getElementById('annualBonus').value) || 0;
+            const unusedVacation = parseFloat(document.getElementById('unusedVacation').value) || 0;
+            
+            if (salary1 === 0 || salary2 === 0 || salary3 === 0) {
+                alert('최근 3개월 급여를 모두 입력해주세요!');
+                return;
+            }
+            
+            const workDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            const workYears = Math.floor(workDays / 365);
+            
+            if (workDays < 365) {
+                alert('계속근로 1년 미만은 퇴직금 지급 대상이 아닙니다.');
+                return;
+            }
+            
+            const threeMonthsTotal = salary1 + salary2 + salary3;
+            const bonusAddition = annualBonus * 3 / 12;
+            const dailyWageForVacation = threeMonthsTotal / 3 / 30;
+            const vacationAddition = unusedVacation * dailyWageForVacation;
+            const totalWage = threeMonthsTotal + bonusAddition + vacationAddition;
+            const dailyAverageWage = totalWage / 90;
+            const severancePay = Math.floor(dailyAverageWage * 30 * (workDays / 365));
+            
+            const taxResult = calculateRetirementTax(severancePay, workYears);
+            
+            document.getElementById('workDays').textContent = workDays.toLocaleString();
+            document.getElementById('workYears').textContent = workYears;
+            document.getElementById('avgSalary').textContent = Math.floor(dailyAverageWage).toLocaleString();
+            document.getElementById('retirementPay').textContent = severancePay.toLocaleString() + '원';
+            
+            document.getElementById('serviceDeduction').textContent = taxResult.serviceDeduction.toLocaleString();
+            document.getElementById('convertedSalary').textContent = Math.floor(taxResult.convertedSalary).toLocaleString();
+            document.getElementById('convertedDeduction').textContent = Math.floor(taxResult.convertedDeduction).toLocaleString();
+            document.getElementById('convertedTaxable').textContent = Math.floor(taxResult.convertedTaxable).toLocaleString();
+            document.getElementById('incomeTax').textContent = Math.floor(taxResult.incomeTax).toLocaleString();
+            document.getElementById('localTax').textContent = Math.floor(taxResult.localTax).toLocaleString();
+            document.getElementById('totalTax').textContent = Math.floor(taxResult.totalTax).toLocaleString();
+            document.getElementById('netAmount').textContent = Math.floor(taxResult.netAmount).toLocaleString();
+            
+            document.getElementById('retirementResult').classList.remove('hidden');
+            document.getElementById('retirementResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function calculateRetirementTax(severanceAmount, yearsOfService) {
+            let serviceDeduction;
+            if (yearsOfService <= 5) {
+                serviceDeduction = yearsOfService * 1000000;
+            } else if (yearsOfService <= 10) {
+                serviceDeduction = 5000000 + (yearsOfService - 5) * 2000000;
+            } else if (yearsOfService <= 20) {
+                serviceDeduction = 15000000 + (yearsOfService - 10) * 2500000;
+            } else {
+                serviceDeduction = 40000000 + (yearsOfService - 20) * 3000000;
+            }
+            
+            const retirementIncome = severanceAmount - serviceDeduction;
+            const convertedSalary = yearsOfService > 0 ? Math.max(0, retirementIncome / yearsOfService) : 0;
+            
+            let convertedDeduction;
+            if (convertedSalary <= 8000000) {
+                convertedDeduction = convertedSalary;
+            } else if (convertedSalary <= 70000000) {
+                convertedDeduction = 8000000 + (convertedSalary - 8000000) * 0.6;
+            } else if (convertedSalary <= 100000000) {
+                convertedDeduction = 45200000 + (convertedSalary - 70000000) * 0.55;
+            } else if (convertedSalary <= 300000000) {
+                convertedDeduction = 61700000 + (convertedSalary - 100000000) * 0.45;
+            } else {
+                convertedDeduction = 151700000 + (convertedSalary - 300000000) * 0.35;
+            }
+            
+            const convertedTaxable = Math.max(0, convertedSalary - convertedDeduction);
+            const convertedTax = calculateIncomeTax(convertedTaxable);
+            const calculatedTax = convertedTax * yearsOfService;
+            const localTax = calculatedTax * 0.1;
+            const totalTax = calculatedTax + localTax;
+            const netAmount = severanceAmount - totalTax;
+            
+            return {
+                serviceDeduction,
+                convertedSalary,
+                convertedDeduction,
+                convertedTaxable,
+                convertedTax,
+                incomeTax: calculatedTax,
+                localTax,
+                totalTax,
+                netAmount
+            };
+        }
+
+        function calculateIncomeTax(taxableIncome) {
+            const taxBrackets = [
+                { limit: 14000000, rate: 0.06, deduction: 0 },
+                { limit: 50000000, rate: 0.15, deduction: 1260000 },
+                { limit: 88000000, rate: 0.24, deduction: 5760000 },
+                { limit: 150000000, rate: 0.35, deduction: 14440000 },
+                { limit: 300000000, rate: 0.38, deduction: 18940000 },
+                { limit: 500000000, rate: 0.40, deduction: 24940000 },
+                { limit: 1000000000, rate: 0.42, deduction: 34940000 },
+                { limit: Infinity, rate: 0.45, deduction: 64940000 }
+            ];
+            
+            if (taxableIncome <= 0) return 0;
+            
+            for (let bracket of taxBrackets) {
+                if (taxableIncome <= bracket.limit) {
+                    return taxableIncome * bracket.rate - bracket.deduction;
+                }
+            }
+            return taxableIncome * 0.45 - 64940000;
+        }
+
+        // 비상장주식 가치평가
+        function selectRealEstate(isHeavy) {
+            isRealEstateHeavy = isHeavy;
+            document.getElementById('realEstateNo').classList.toggle('active', !isHeavy);
+            document.getElementById('realEstateYes').classList.toggle('active', isHeavy);
+        }
+
+        function calculateUnlistedStock() {
+            // 입력값 가져오기
+            const totalShares = parseFloat(document.getElementById('totalShares').value) || 0;
+            const year1Income = parseFloat(document.getElementById('year1Income').value) || 0;
+            const year2Income = parseFloat(document.getElementById('year2Income').value) || 0;
+            const year3Income = parseFloat(document.getElementById('year3Income').value) || 0;
+            const bondYield = parseFloat(document.getElementById('bondYield').value) / 100 || 0.035;
+            const bookAssets = parseFloat(document.getElementById('bookAssets').value) || 0;
+            const bookLiabilities = parseFloat(document.getElementById('bookLiabilities').value) || 0;
+            const realEstateAdj = parseFloat(document.getElementById('realEstateAdj').value) || 0;
+            const securitiesAdj = parseFloat(document.getElementById('securitiesAdj').value) || 0;
+            
+            if (totalShares <= 0) {
+                alert('발행주식 총수를 입력해주세요!');
+                return;
+            }
+            
+            if (year1Income === 0 && year2Income === 0 && year3Income === 0) {
+                alert('최소 1개 이상의 순손익액을 입력해주세요!');
+                return;
+            }
+            
+            if (bookAssets === 0) {
+                alert('장부상 자산총액을 입력해주세요!');
+                return;
+            }
+            
+            // 1. 순손익가치 계산
+            const weightedAvgIncome = (year1Income * 3 + year2Income * 2 + year3Income * 1) / 6;
+            const perShareIncome = weightedAvgIncome / totalShares;
+            const discountRate = bondYield + 0.02; // 위험프리미엄 2%
+            const incomeValue = perShareIncome / discountRate;
+            
+            // 2. 순자산가치 계산
+            const adjustedAssets = bookAssets + realEstateAdj + securitiesAdj;
+            const adjustedLiabilities = bookLiabilities;
+            const netAssetValue = adjustedAssets - adjustedLiabilities;
+            const perShareAssetValue = netAssetValue / totalShares;
+            
+            // 3. 가중평균 계산
+            let finalValue, incomeWeight, assetWeight;
+            
+            if (isRealEstateHeavy) {
+                // 부동산과다보유법인: 순자산가치 100%
+                finalValue = perShareAssetValue;
+                incomeWeight = 0;
+                assetWeight = 100;
+            } else {
+                // 일반법인: 순손익가치 3 : 순자산가치 2
+                finalValue = (incomeValue * 3 + perShareAssetValue * 2) / 5;
+                incomeWeight = 60;  // 3/5
+                assetWeight = 40;   // 2/5
+            }
+            
+            // 결과 표시
+            document.getElementById('weightedIncome').textContent = Math.floor(weightedAvgIncome).toLocaleString();
+            document.getElementById('perShareIncome').textContent = Math.floor(perShareIncome).toLocaleString();
+            document.getElementById('discountRate').textContent = (discountRate * 100).toFixed(2);
+            document.getElementById('incomeValue').textContent = Math.floor(incomeValue).toLocaleString();
+            
+            document.getElementById('adjAssets').textContent = Math.floor(adjustedAssets).toLocaleString();
+            document.getElementById('adjLiabilities').textContent = Math.floor(adjustedLiabilities).toLocaleString();
+            document.getElementById('netAssetTotal').textContent = Math.floor(netAssetValue).toLocaleString();
+            document.getElementById('assetValue').textContent = Math.floor(perShareAssetValue).toLocaleString();
+            
+            document.getElementById('incomeWeight').textContent = incomeWeight;
+            document.getElementById('assetWeight').textContent = assetWeight;
+            document.getElementById('finalValue').textContent = Math.floor(finalValue).toLocaleString() + '원';
+            
+            document.getElementById('valuationResult').classList.remove('hidden');
+            document.getElementById('valuationResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+</body>
+</html>
